@@ -39,7 +39,24 @@ selected_region = st.sidebar.selectbox("Select Region / Currency", list(currency
 sym = currency_dict[selected_region] # This variable holds the chosen symbol!
 
 # Financial inputs now dynamically show the selected currency symbol
-iron_price = st.sidebar.number_input(f"Iron Ore Price ({sym}/ton)", value=110.0, step=5.0)
+import yfinance as yf
+
+# Function to fetch real market data
+@st.cache_data(ttl=3600) # Caches the price for 1 hour so it doesn't slow down the app
+def get_live_iron_price():
+    try:
+        # TIO=F is the ticker for Iron Ore Futures on Yahoo Finance
+        ticker = yf.Ticker("TIO=F")
+        live_price = ticker.history(period="1d")['Close'].iloc[-1]
+        return round(live_price, 2)
+    except:
+        return 110.0 # Fallback price just in case the internet is down
+
+live_price = get_live_iron_price()
+st.sidebar.success(f"📈 Live Global Iron Price: ${live_price}/ton")
+
+# Use this live_price variable in your profit math later!
+iron_price = live_price
 carbon_tax = st.sidebar.number_input(f"Carbon Tax ({sym}/ton CO2)", value=50.0, step=5.0)
 energy_cost = st.sidebar.number_input(f"Electricity Cost ({sym}/kWh)", value=0.12, step=0.01)
 
