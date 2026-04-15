@@ -2,9 +2,32 @@ import streamlit as st
 import pandas as pd
 import joblib
 import plotly.graph_objects as go
+import yfinance as yf
+import time
+import numpy as np
 
-# --- 1. PAGE SETUP ---
-st.set_page_config(page_title="EcoMagnet AI Global", page_icon="🌍", layout="wide")
+# --- 1. PAGE SETUP & SECURITY (LOGIN) ---
+st.set_page_config(page_title="EcoMagnet AI Premium", page_icon="🌍", layout="wide")
+
+# Login Logic
+if 'logged_in' not in st.session_state:
+    st.session_state['logged_in'] = False
+
+if not st.session_state['logged_in']:
+    st.title("🔒 EcoMagnet Enterprise Login")
+    st.info("Please log in to access the AI Control Room.")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    
+    if st.button("Login"):
+        if username == "admin" and password == "mining2026":
+            st.session_state['logged_in'] = True
+            st.rerun()
+        else:
+            st.error("Incorrect Username or Password")
+    st.stop() # Stops the rest of the code from running if not logged in!
+
+# --- IF LOGGED IN, SHOW THE DASHBOARD ---
 st.title("🌍 EcoMagnet AI: Global Enterprise Edition")
 st.markdown("Optimize Mineral Recovery, Minimize Carbon, Maximize Local Profit.")
 
@@ -15,31 +38,28 @@ def load_model():
 
 model = load_model()
 
-# --- 3. CURRENCY DICTIONARY ---
-# We map the country/currency to its specific symbol
-currency_dict = {
-    "USD ($) - United States": "$",
-    "INR (₹) - India": "₹",
-    "SAR (﷼) - Saudi Arabia": "﷼",
-    "AED (د.إ) - UAE": "د.إ",
-    "QAR (﷼) - Qatar": "﷼",
-    "KWD (د.ك) - Kuwait": "د.ك",
-    "OMR (ر.ع.) - Oman": "ر.ع.",
-    "BHD (.د.ب) - Bahrain": ".د.ب",
-    "RUB (₽) - Russia": "₽",
-    "KZT (₸) - Kazakhstan": "₸",
-    "TRY (₺) - Turkey": "₺"
-}
+# --- 3. LIVE MARKET API (YFINANCE) ---
+@st.cache_data(ttl=3600) # Remembers the price for 1 hour
+def get_live_iron_price():
+    try:
+        ticker = yf.Ticker("TIO=F") # Iron Ore Futures
+        live_price = ticker.history(period="1d")['Close'].iloc[-1]
+        return round(live_price, 2)
+    except:
+        return 110.0 # Backup price if internet fails
+
+live_price = get_live_iron_price()
 
 # --- 4. SIDEBAR: GLOBAL MARKET INPUTS ---
 st.sidebar.header("🌍 Localization & Market Data")
+currency_dict = {"USD ($)": "$", "INR (₹)": "₹", "SAR (﷼)": "﷼", "RUB (₽)": "₽"}
+selected_region = st.sidebar.selectbox("Select Currency", list(currency_dict.keys()))
+sym = currency_dict[selected_region]
 
-# Currency Selector
-selected_region = st.sidebar.selectbox("Select Region / Currency", list(currency_dict.keys()))
-sym = currency_dict[selected_region] # This variable holds the chosen symbol!
+st.sidebar.success(f"📈 Live Global Iron Price: {sym}{live_price}/ton")
 
-# Financial inputs now dynamically show the selected currency symbol
-iron_price = st.sidebar.number_input(f"Iron Ore Price ({sym}/ton)", value=110.0, step=5.0)
+# Financial inputs
+iron_price = st.sidebar.number_input(f"Iron Ore Price ({sym}/ton)", value=live_price, step=5.0)
 carbon_tax = st.sidebar.number_input(f"Carbon Tax ({sym}/ton CO2)", value=50.0, step=5.0)
 energy_cost = st.sidebar.number_input(f"Electricity Cost ({sym}/kWh)", value=0.12, step=0.01)
 
@@ -71,35 +91,27 @@ with col2:
     ai_co2 = ai_kwh * 0.475
     ai_profit = (ai_recovery / 100) * iron_price - (ai_kwh * energy_cost) - ((ai_co2 / 1000) * carbon_tax)
 
-# --- 6. INTERACTIVE FINANCIAL GRAPH ---
-st.write("---")
-st.subheader("Financial & ESG Impact Visualization")
-
-fig = go.Figure(data=[
-    go.Bar(name=f'Gross Revenue ({sym})', x=['Baseline', 'AI Optimized'], y=[(base_recovery/100)*iron_price, (ai_recovery/100)*iron_price], marker_color='#2ecc71'),
-    go.Bar(name=f'Energy Cost ({sym})', x=['Baseline', 'AI Optimized'], y=[base_kwh*energy_cost, ai_kwh*energy_cost], marker_color='#e74c3c'),
-    go.Bar(name=f'Carbon Tax ({sym})', x=['Baseline', 'AI Optimized'], y=[(base_co2/1000)*carbon_tax, (ai_co2/1000)*carbon_tax], marker_color='#34495e')
-])
-fig.update_layout(barmode='group', title=f"Cost vs Revenue per Ton Processed ({sym})", template="plotly_white")
-st.plotly_chart(fig, use_container_width=True)
-
-# --- 7. THE "AHA" METRIC (Net Profit) ---
+# --- 6. THE "AHA" METRIC (Net Profit) ---
 profit_diff = ai_profit - base_profit
 st.metric("AI Generated Value (Extra Profit per Ton)", f"{sym}{profit_diff:.2f}", delta=f"{profit_diff/base_profit * 100:.1f}% Increase")
 
-# --- 8. EXECUTIVE REPORT DOWNLOAD ---
+# --- 7. LIVE SCADA SIMULATOR ---
 st.write("---")
-report_data = pd.DataFrame({
-    "Metric": ["Recovery (%)", "Energy (kWh)", "CO2 Emissions (kg)", f"Net Profit ({sym})"],
-    "Manual Settings": [round(base_recovery,2), round(base_kwh,2), round(base_co2,2), round(base_profit,2)],
-    "AI Optimized": [round(ai_recovery,2), round(ai_kwh,2), round(ai_co2,2), round(ai_profit,2)]
-})
+st.subheader("🔴 Live SCADA Sensor Feed (Simulator)")
+st.write("Click below to simulate real-time sensor data streaming from the magnetic drum.")
 
-csv = report_data.to_csv(index=False).encode('utf-8')
-
-st.download_button(
-    label=f"📥 Download Executive Summary (CSV format - {sym})",
-    data=csv,
-    file_name='EcoMagnet_Global_Report.csv',
-    mime='text/csv',
-)
+if st.button("Start Live Feed Simulation"):
+    placeholder = st.empty() # Creates an empty box to update
+    for seconds in range(15): # Runs for 15 seconds
+        live_field = base_field + np.random.randint(-50, 50)
+        live_speed = base_speed + np.random.randint(-2, 2)
+        live_recovery = model.predict([[live_field, live_speed, grade]])[0]
+        
+        with placeholder.container():
+            kpi1, kpi2, kpi3 = st.columns(3)
+            kpi1.metric("Live Sensor: Gauss", f"{live_field}")
+            kpi2.metric("Live Sensor: RPM", f"{live_speed}")
+            kpi3.metric("Live AI Prediction", f"{live_recovery:.2f}%")
+        
+        time.sleep(1) # Pauses for 1 second
+    st.success("Simulation Complete.")
