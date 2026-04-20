@@ -1,10 +1,10 @@
-# 🏭 EcoMagnet AI: Enterprise Control Room
+# 🏭 Ferrum IQ: Enterprise Control Room
 **A Micro-Digital Twin & AI Optimizer for Mineral Processing**
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://YOUR-APP-URL.streamlit.app)
 
 ## 🌍 Executive Summary
-EcoMagnet AI is an enterprise-grade Software as a Service (SaaS) prototype designed to optimize magnetic separation circuits in the mining and metallurgical industries. By utilizing Machine Learning (Random Forest Regressor), this digital twin helps plant managers maximize iron recovery while minimizing energy consumption and carbon tax liabilities.
+Ferrum IQ is an enterprise-grade Software as a Service (SaaS) prototype designed to optimize magnetic separation circuits in the mining and metallurgical industries. By utilizing Machine Learning (Random Forest Regressor), this digital twin helps plant managers maximize iron recovery while minimizing energy consumption and carbon tax liabilities.
 
 ## ✨ Enterprise Features
 * **🎛️ AI Process Optimization:** Replaces manual guesswork with data-driven Field Strength (Gauss) and Drum Speed (RPM) recommendations.
@@ -22,7 +22,7 @@ EcoMagnet AI is an enterprise-grade Software as a Service (SaaS) prototype desig
 
 ## 🚀 How to Access the Live App
 The application is currently deployed on Streamlit Community Cloud. 
-**[Click here to launch the EcoMagnet Control Room](https://YOUR-APP-URL.streamlit.app)**
+**[Click here to launch the Ferrum IQ Control Room](https://YOUR-APP-URL.streamlit.app)**
 *(Login Credentials for Demo: Username: `admin` | Password: `mining2026`)*
 
 ## 💻 How to Run Locally
@@ -30,4 +30,4 @@ If you wish to run this application on your local machine, follow these steps:
 
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/YOUR-USERNAME/EcoMagnet-App.git](https://github.com/YOUR-USERNAME/EcoMagnet-App.git)
+   git clone [https://github.com/YOUR-USERNAME/Ferrum IQ-App.git](https://github.com/YOUR-USERNAME/Ferrum IQ-App.git)
