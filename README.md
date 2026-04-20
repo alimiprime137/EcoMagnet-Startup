@@ -22,7 +22,7 @@ Ferrum IQ is an enterprise-grade Software as a Service (SaaS) prototype designed
 
 ## 🚀 How to Access the Live App
 The application is currently deployed on Streamlit Community Cloud. 
-**[Click here to launch the Ferrum IQ Control Room]((https://ecomagnet-startup-a6d8yndyc8q6gehh4ravzt.streamlit.app/#scenario-analysis-profit-calculated-in-r))**
+**[Click here to launch the Ferrum IQ Control Room]([https://ecomagnet-startup-a6d8yndyc8q6gehh4ravzt.streamlit.app/#scenario-analysis-profit-calculated-in-r])**
 *(Login Credentials for Demo: Username: `admin` | Password: `mining2026`)*
 
 ## 💻 How to Run Locally
