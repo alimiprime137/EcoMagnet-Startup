@@ -9,7 +9,17 @@ import numpy as np
 from datetime import datetime, timedelta
 
 # --- 1. PAGE SETUP & SECURITY (LOGIN) ---
-st.set_page_config(page_title="EcoMagnet AI Premium", page_icon="🏭", layout="wide")
+import streamlit as st
+from PIL import Image
+
+# Load the logo image
+img = Image.open("logo.png")
+
+st.set_page_config(
+    page_title="Ferrum IQ Control Room",
+    page_icon=img,
+    layout="wide"
+)
 
 if 'logged_in' not in st.session_state:
     st.session_state['logged_in'] = False
