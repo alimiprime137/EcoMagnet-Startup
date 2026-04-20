@@ -72,7 +72,15 @@ manager_phone = st.sidebar.text_input("Manager Phone (for SMS Alerts)", "+91-")
 alert_threshold = st.sidebar.slider("Minimum Recovery Alert (%)", 10, 40, 25)
 
 # --- APP HEADER ---
-st.title("🏭 EcoMagnet AI: Enterprise Control Room")
+# Create two columns: one for the logo, one for the title
+col1, col2 = st.columns([1, 5]) 
+
+with col1:
+    st.image("logo.png", width=120) # This displays your new gear logo
+
+with col2:
+    st.title("Ferrum IQ: Enterprise Optimization Platform")
+    st.write("Machine Learning Driven Mineral Recovery & Energy Efficiency")
 st.markdown("Digital Twin & Predictive Analytics Dashboard")
 
 # --- CREATE TABS FOR CLEAN UI ---
